@@ -37,11 +37,20 @@ export const getAllUser = async(req,res)=>{
 
 export const searchUser = async(req,res)=>{
     try {
-        const search  = req.body.search
+        // const search  = req.body.search
+        const search  = req.query.search
+        const page = req.query.page || 1
+        const limit = req.query.limit || 2
+        const skip =(page-1)*limit 
         const {gender} = req.body
-        const user = await User.find({name:{$regex: ".*"+search+".*",$options:"i"}})
+
+        const userId = await User.find({})
+        console.log(userId)
+        const user = await User.find({name:{$regex: ".*"+search+".*",$options:"i"}}).limit(limit).skip(skip)
         // const user = await User.find({gender:"male"})
-        
+
+        // console.log(user,"user")
+
         if(user.length>0){
             return res.status(StatusCodes.OK).json({success:true, message:"user find successfully" ,data: user})
         }else{
